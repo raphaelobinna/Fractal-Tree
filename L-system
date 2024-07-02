@@ -1,0 +1,62 @@
+import turtle
+
+turtle = turtle.Turtle()
+
+def apply_rules(char):
+    rules = {
+        'F': 'FF',
+        'X': 'F+[[X]-X]-F[-FX]+X'
+    }
+    return rules.get(char, char)
+
+def process_string(old_str):
+    new_str = ''
+    for char in old_str:
+        new_str += apply_rules(char)
+    return new_str
+
+def create_lsystem(iterations, axiom):
+    lsystem_str = axiom
+    for _ in range(iterations):
+        lsystem_str = process_string(lsystem_str)
+    return lsystem_str
+
+def draw_lsystem(t, instructions, angle, distance):
+    stack = []
+    for cmd in instructions:
+        if cmd == 'F':
+            t.forward(distance)
+        elif cmd == '+':
+            t.right(angle)
+        elif cmd == '-':
+            t.left(angle)
+        elif cmd == '[':
+            stack.append((t.position(), t.heading()))
+        elif cmd == ']':
+            position, heading = stack.pop()
+            t.penup()
+            t.setposition(position)
+            t.setheading(heading)
+            t.pendown()
+
+# Parameters
+axiom = 'X'
+iterations = 5
+angle = 25
+distance = 5
+
+# Create L-System string
+lsystem_str = create_lsystem(iterations, axiom)
+
+# Set up the screen and turtle
+turtle.speed('fastest')
+turtle.left(90)
+turtle.penup()
+turtle.setposition(0, -250)
+turtle.pendown()
+
+# Draw the L-System
+draw_lsystem(turtle, lsystem_str, angle, distance)
+
+# Finish drawing
+turtle.done()
